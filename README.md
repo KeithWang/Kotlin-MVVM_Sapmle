@@ -5,7 +5,7 @@ This is MVVM sample for Android, and used free api to show information from Taip
 okhttp3, gson, glide, koin, Rxjava2, Retrofit2, Mockito
 
 ## Architecture diagram
-![架構圖](https://github.com/KeithWang/KotlinMVPDemo/blob/master/pic/MVP_Architecture.png?raw=true)
+![架構圖](https://github.com/KeithWang/KotlinMVVMDemo/blob/master/pic/MVVM_Model.png?raw=true)
 
 ## reference
 [googlesamples/android-architecture](https://github.com/googlesamples/android-architecture)
