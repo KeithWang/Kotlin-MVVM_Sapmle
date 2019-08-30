@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">@color/alpha30Gray</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="alpha10Gray">#10000000</color>
+    <color name="alpha30Gray">#30000000</color>
+    <color name="alpha50Gray">#50000000</color>
+    <color name="alpha80Gray">#80000000</color>
+    <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
+</resources>

@@ -1,0 +1,10 @@
+<!-- res/drawable/ic_menu_animatable.xml -->
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_menu_vector">
+    <target
+        android:name="menu"
+        android:animation="@animator/ic_menu_to_back" />
+    <target
+        android:name="rotation"
+        android:animation="@animator/zero_to_rotation" />
+</animated-vector>

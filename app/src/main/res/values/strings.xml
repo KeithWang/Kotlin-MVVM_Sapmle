@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">KotlinMVVMDemo</string>
+    <string name="main_taipei_zoo">台北市立動物園</string>
+    <string name="http_get_error">資料讀取失敗，請檢查網路狀態</string>
+    <string name="main_house_no_rest_date">無休館資訊</string>
+    <string name="house_list_item_top_animal_info">動物資料</string>
+    <string name="house_list_item_top_no_animal">該區無動物資料顯示</string>
+    <string name="house_list_item_top_open_web">在網頁開啟</string>
+    <string name="house_list_item_no_feature">無特徵資料</string>
+    <string name="animal_feature">特徵</string>
+    <string name="animal_habitat">棲息地</string>
+    <string name="animal_diet">飲食</string>
+    <string name="animal_update_time">最後更新時間</string>
+    <string name="no_data_show">無資料</string>
+    <string name="common_confirm">確認</string>
+</resources>
