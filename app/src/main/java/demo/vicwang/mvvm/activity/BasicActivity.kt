@@ -73,6 +73,7 @@ abstract class BasicActivity : AppCompatActivity() {
         }
         confirm.setOnClickListener(permission)
 
-        mDialog.show()
+        if (!this.isFinishing)
+            mDialog.show()
     }
 }
