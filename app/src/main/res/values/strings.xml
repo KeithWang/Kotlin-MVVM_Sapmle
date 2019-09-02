@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">KotlinMVVMDemo</string>
     <string name="main_taipei_zoo">台北市立動物園</string>
+    <string name="http_login_fail">登入失敗，請重新再嘗試</string>
     <string name="http_get_error">資料讀取失敗，請檢查網路狀態</string>
     <string name="main_house_no_rest_date">無休館資訊</string>
     <string name="house_list_item_top_animal_info">動物資料</string>
@@ -13,4 +14,6 @@
     <string name="animal_update_time">最後更新時間</string>
     <string name="no_data_show">無資料</string>
     <string name="common_confirm">確認</string>
+    <string name="login_dialog_account">帳號：</string>
+    <string name="login_dialog_pwd">密碼：</string>
 </resources>

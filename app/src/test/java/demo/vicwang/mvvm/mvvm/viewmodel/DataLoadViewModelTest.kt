@@ -7,7 +7,8 @@ import com.google.gson.reflect.TypeToken
 import demo.vicwang.mvvm.adapter.item.HouseListAnimalItem
 import demo.vicwang.mvvm.adapter.item.MainHouseListItem
 import demo.vicwang.mvvm.mvvm.model.ApiRepository
-import demo.vicwang.mvvm.mvvm.model.ResponseItem
+import demo.vicwang.mvvm.mvvm.model.login.LoginResponseItem
+import demo.vicwang.mvvm.mvvm.model.taipei.TaipeiResponseItem
 import demo.vicwang.mvvm.mvvm.rxprovider.TrampolineSchedulerProvider
 import demo.vicwang.mvvm.mvvm.viewmodel.item.AnimalListDataResultItem
 import demo.vicwang.mvvm.mvvm.viewmodel.item.DataLoadStatus
@@ -55,13 +56,49 @@ class DataLoadViewModelTest {
     }
 
     @Test
+    fun `Login Fail`() {
+        val account = "account"
+        val password = "password"
+        val resultStr = "{}"
+        val expectErrorType = 2
+
+        val item = Gson().fromJson(resultStr, LoginResponseItem::class.java)
+
+        `when`(apiRope.getLoginToken(account, password)).thenReturn(Observable.error(Exception()))
+
+        viewModel.onLogin(account, password)
+
+        verify(houseDataObserver).onChanged(HouseDataResultItem(DataLoadStatus.FAIL, null, expectErrorType))
+    }
+
+    @Test
+    fun `Login Success And Get Data Success`() {
+        val account = "account"
+        val password = "password"
+        val resultStr = "{\"token\":\"token\"}"
+        val itemLogin = Gson().fromJson(resultStr, LoginResponseItem::class.java)
+        `when`(apiRope.getLoginToken(account, password)).thenReturn(Observable.just(itemLogin))
+
+        val successJsonStr = "{\"result\":{\"results\":[{\"E_Pic_URL\":\"\",\"E_Geo\":\"\",\"E_Info\":\"\",\"E_no\":\"1\",\"E_Category\":\"\",\"E_Name\":\"\",\"E_Memo\":\"\",\"_id\":1,\"E_URL\":\"\"},{\"E_Pic_URL\":\"\",\"E_Geo\":\"\",\"E_Info\":\"\",\"E_no\":\"1\",\"E_Category\":\"\",\"E_Name\":\"\",\"E_Memo\":\"\",\"_id\":1,\"E_URL\":\"\"}]}}"
+        val item = Gson().fromJson(successJsonStr, TaipeiResponseItem::class.java)
+        `when`(apiRope.getHouseData(itemLogin.token)).thenReturn(Observable.just(item))
+
+        viewModel.onLogin(account, password)
+
+        val listType = object : TypeToken<ArrayList<MainHouseListItem>>() {}.type
+        val listData: ArrayList<MainHouseListItem> = Gson().fromJson(item.resultJsonArray.toString(), listType)
+
+        verify(houseDataObserver).onChanged(HouseDataResultItem(DataLoadStatus.SUCCESS, listData, null))
+    }
+
+    @Test
     fun `Init House Data Has Http Failed or Observable Is Null`() {
         val expectErrorType = 1
+        val tempToken = "token"
 
+        `when`(apiRope.getHouseData(tempToken)).thenReturn(Observable.error(NullPointerException()))
 
-        `when`(apiRope.getHouseData()).thenReturn(Observable.error(NullPointerException()))
-
-        viewModel.onLoadHouseData()
+        viewModel.onLoadHouseData(tempToken)
 
         verify(houseDataObserver).onChanged(HouseDataResultItem(DataLoadStatus.FAIL, null, expectErrorType))
 
@@ -69,27 +106,29 @@ class DataLoadViewModelTest {
 
     @Test
     fun `Init House Data Has Http Success But Json Inner Error`() {
+        val tempToken = "token"
         val successJsonStr = "{}"
         val expectErrorType = 1
 
-        val item = Gson().fromJson(successJsonStr, ResponseItem::class.java)
+        val item = Gson().fromJson(successJsonStr, TaipeiResponseItem::class.java)
 
-        `when`(apiRope.getHouseData()).thenReturn(Observable.just(item))
+        `when`(apiRope.getHouseData(tempToken)).thenReturn(Observable.just(item))
 
-        viewModel.onLoadHouseData()
+        viewModel.onLoadHouseData(tempToken)
 
         verify(houseDataObserver).onChanged(HouseDataResultItem(DataLoadStatus.FAIL, null, expectErrorType))
     }
 
     @Test
     fun `Init House Data Has Http Success`() {
+        val tempToken = "token"
         val successJsonStr = "{\"result\":{\"results\":[{\"E_Pic_URL\":\"\",\"E_Geo\":\"\",\"E_Info\":\"\",\"E_no\":\"1\",\"E_Category\":\"\",\"E_Name\":\"\",\"E_Memo\":\"\",\"_id\":1,\"E_URL\":\"\"},{\"E_Pic_URL\":\"\",\"E_Geo\":\"\",\"E_Info\":\"\",\"E_no\":\"1\",\"E_Category\":\"\",\"E_Name\":\"\",\"E_Memo\":\"\",\"_id\":1,\"E_URL\":\"\"}]}}"
 
-        val item = Gson().fromJson(successJsonStr, ResponseItem::class.java)
+        val item = Gson().fromJson(successJsonStr, TaipeiResponseItem::class.java)
 
-        `when`(apiRope.getHouseData()).thenReturn(Observable.just(item))
+        `when`(apiRope.getHouseData(tempToken)).thenReturn(Observable.just(item))
 
-        viewModel.onLoadHouseData()
+        viewModel.onLoadHouseData(tempToken)
 
         val listType = object : TypeToken<ArrayList<MainHouseListItem>>() {}.type
         val listData: ArrayList<MainHouseListItem> = Gson().fromJson(item.resultJsonArray.toString(), listType)
@@ -119,7 +158,7 @@ class DataLoadViewModelTest {
         val houseItemStr = "{\"E_Pic_URL\":\"\",\"E_Geo\":\"\",\"E_Info\":\"\",\"E_no\":\"1\",\"E_Category\":\"\",\"E_Name\":\"\",\"E_Memo\":\"\",\"_id\":1,\"E_URL\":\"\"}"
         val houseItem = Gson().fromJson(houseItemStr, MainHouseListItem::class.java)
 
-        val item = Gson().fromJson(successJsonStr, ResponseItem::class.java)
+        val item = Gson().fromJson(successJsonStr, TaipeiResponseItem::class.java)
 
         `when`(apiRope.getAnimalData(ArgumentMatchers.anyString())).thenReturn(Observable.just(item))
 
@@ -134,7 +173,7 @@ class DataLoadViewModelTest {
         val houseItemStr = "{\"E_Pic_URL\":\"\",\"E_Geo\":\"\",\"E_Info\":\"\",\"E_no\":\"1\",\"E_Category\":\"\",\"E_Name\":\"\",\"E_Memo\":\"\",\"_id\":1,\"E_URL\":\"\"}"
         val houseItem = Gson().fromJson(houseItemStr, MainHouseListItem::class.java)
 
-        val item = Gson().fromJson(successJsonStr, ResponseItem::class.java)
+        val item = Gson().fromJson(successJsonStr, TaipeiResponseItem::class.java)
 
 
         `when`(apiRope.getAnimalData(ArgumentMatchers.anyString())).thenReturn(Observable.just(item))

@@ -1,13 +1,18 @@
 package demo.vicwang.mvvm.activity
 
+import android.app.Dialog
 import android.arch.lifecycle.Observer
+import android.graphics.Color
 import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import android.view.Window
+import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
@@ -31,8 +36,8 @@ class MainActivity : BasicActivity(), MainView {
      * Tool or page widget
      * */
     private lateinit var wRecycleView: RecyclerView
-
     private lateinit var wLay_Loading_Area: FrameLayout
+    private lateinit var mDialog: Dialog
     /*
      * Toolbar
      * */
@@ -83,9 +88,9 @@ class MainActivity : BasicActivity(), MainView {
         subscriptViewModel()
 
         /*
-        * First to Load Data
+        * Try to login and load data
         * */
-        mDataViewModel.onLoadHouseData()
+        opeLoginDialog()
     }
 
 
@@ -142,7 +147,10 @@ class MainActivity : BasicActivity(), MainView {
 
     private fun onShowErrorMsg(errorType: Int) {
         onShowLoadingView(false)
-        openErrorDialog(getString(R.string.http_get_error), errorType)
+        if (errorType == 2)
+            openErrorDialog(getString(R.string.http_login_fail), errorType)
+        else
+            openErrorDialog(getString(R.string.http_get_error), errorType)
     }
 
     private fun onHouseDataLoadSuccess(o: Any) {
@@ -265,5 +273,32 @@ class MainActivity : BasicActivity(), MainView {
     override fun onOpenAnimalInfoPage(item: HouseListAnimalItem) {
         setTitleBar(item.A_Name_Ch, false, true)
         onOpenFragment(AnimalInfoFragment.newInstance(item), AnimalInfoFragment.FRAGMENT_ANIMAL_INFO_TAG)
+    }
+
+    /*
+     * Custom error dialog
+     * */
+    private fun opeLoginDialog() {
+        mDialog = Dialog(mContext, R.style.PauseDialog)
+        mDialog.setContentView(R.layout.cusomt_login_dailog)
+        Objects.requireNonNull<Window>(mDialog.window).setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        mDialog.setCancelable(false)
+
+        val confirm = mDialog.findViewById<Button>(R.id.custom_login_dialog_btn_confirm)
+        val editAccount = mDialog.findViewById<TextView>(R.id.custom_login_dialog_edit_account)
+        val editPassword = mDialog.findViewById<TextView>(R.id.custom_login_dialog_edit_pwd)
+
+        val permission = View.OnClickListener { v ->
+            when (v.id) {
+                R.id.custom_login_dialog_btn_confirm -> {
+                    mDataViewModel.onLogin(editAccount.text.toString(), editPassword.text.toString())
+                    mDialog.dismiss()
+                }
+            }
+        }
+        confirm.setOnClickListener(permission)
+
+        if (!this.isFinishing)
+            mDialog.show()
     }
 }

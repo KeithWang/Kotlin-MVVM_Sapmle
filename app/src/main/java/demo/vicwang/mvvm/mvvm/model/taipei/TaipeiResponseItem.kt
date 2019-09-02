@@ -1,11 +1,11 @@
-package demo.vicwang.mvvm.mvvm.model
+package demo.vicwang.mvvm.mvvm.model.taipei
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-data class ResponseItem(
+data class TaipeiResponseItem(
         @SerializedName("result") val resultObj: JsonObject
 ) : Serializable {
 

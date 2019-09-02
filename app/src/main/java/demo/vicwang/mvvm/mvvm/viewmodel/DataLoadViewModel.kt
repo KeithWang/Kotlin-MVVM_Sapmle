@@ -23,8 +23,39 @@ class DataLoadViewModel(private val mApiRepo: ApiRepository
 
     private var mLoadingShow = MutableLiveData<Boolean>()
 
-    fun onLoadHouseData() {
-        disposables.add(mApiRepo.getHouseData()
+    /*
+    * You can custom "LiveData" Object to verify email format.
+    * */
+    fun onLogin(email: String, password: String) {
+        /*
+        *
+        *  ... To check email format.
+        *
+        * */
+        disposables.add(mApiRepo.getLoginToken(email, password)
+                .subscribeOn(mRxProvider.io())
+                .observeOn(mRxProvider.ui())
+                .doOnSubscribe { mLoadingShow.value = true }
+                .doFinally {
+                }
+                .subscribe({ result ->
+                    /*
+                    * It used toke token to simulate login action.
+                    * */
+                    onLoadHouseData(result.token)
+                }, { error ->
+                    mHouseData.value = HouseDataResultItem(DataLoadStatus.FAIL, null, 2)
+                    mLoadingShow.value = false
+                    disposables.clear()
+                    error.printStackTrace()
+                }))
+    }
+
+    /*
+    * Get Main Page Data
+    * */
+    fun onLoadHouseData(token: String) {
+        disposables.add(mApiRepo.getHouseData(token)
                 .subscribeOn(mRxProvider.io())
                 .observeOn(mRxProvider.ui())
                 .doOnSubscribe { mLoadingShow.value = true }
@@ -44,6 +75,9 @@ class DataLoadViewModel(private val mApiRepo: ApiRepository
                 }))
     }
 
+    /*
+    * Get Animal Select Area Data
+    * */
     fun onLoadAnimalListData(item: MainHouseListItem) {
         disposables.add(mApiRepo.getAnimalData(item.E_Name)
                 .subscribeOn(mRxProvider.io())
