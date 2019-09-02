@@ -276,7 +276,7 @@ class MainActivity : BasicActivity(), MainView {
     }
 
     /*
-     * Custom error dialog
+     * Custom Login dialog
      * */
     private fun opeLoginDialog() {
         mDialog = Dialog(mContext, R.style.PauseDialog)
